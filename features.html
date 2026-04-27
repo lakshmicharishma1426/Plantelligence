@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Features — Plantelligence</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    .feat-hero {
+      background: linear-gradient(135deg,#1b5e20,#2e7d32,#388e3c);
+      padding: 3.5rem 2.5rem 3rem; position:relative; overflow:hidden;
+    }
+    .feat-hero::before {
+      content:''; position:absolute; inset:0;
+      background: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1400&q=50') center/cover;
+      opacity:.15;
+    }
+    .feat-hero-inner { position:relative; max-width:1200px; margin:0 auto; text-align:center; }
+    .feat-hero h1 { font-family:var(--font-head); color:#fff; font-size:clamp(2.2rem,4vw,3.2rem); text-shadow:0 2px 16px rgba(0,0,0,.3); }
+    .feat-hero p  { color:rgba(255,255,255,.82); margin-top:.6rem; font-size:1.1rem; }
+    .feat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1.6rem; }
+    .feat-card {
+      background:#fff; border-radius:20px; padding:2rem 1.6rem;
+      box-shadow:0 4px 20px rgba(0,0,0,.09); transition:transform .25s, box-shadow .25s;
+      position:relative; overflow:hidden;
+    }
+    .feat-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:4px;
+      background:linear-gradient(90deg,var(--green-light),var(--green-dark));
+    }
+    .feat-card:hover { transform:translateY(-6px); box-shadow:0 12px 36px rgba(0,0,0,.14); }
+    .feat-icon {
+      width:60px; height:60px; border-radius:16px;
+      background:linear-gradient(135deg,var(--green-pale),#c8e6c9);
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.8rem; margin-bottom:1rem;
+    }
+    .feat-card h3 { font-family:var(--font-head); color:var(--green-dark); font-size:1.2rem; margin-bottom:.5rem; }
+    .feat-card p  { color:#666; font-size:.9rem; line-height:1.65; margin-bottom:1rem; }
+    .feat-list    { padding-left:1.1rem; color:#555; font-size:.87rem; line-height:1.85; }
+    .crop-tabs-nav { display:flex; flex-wrap:wrap; gap:.6rem; margin-bottom:1.5rem; }
+    .ctab {
+      padding:8px 20px; border-radius:50px; border:2px solid var(--green-mid);
+      color:var(--green-mid); background:transparent; font-family:var(--font-body);
+      font-weight:600; font-size:.9rem; cursor:pointer; transition:all .2s;
+    }
+    .ctab.active, .ctab:hover { background:var(--green-mid); color:#fff; }
+    .crop-info-panel { display:none; background:#fff; border-radius:20px; box-shadow:0 4px 20px rgba(0,0,0,.1); overflow:hidden; }
+    .crop-info-panel.active { display:grid; grid-template-columns:1fr 1fr; }
+    @media(max-width:680px){ .crop-info-panel.active { grid-template-columns:1fr; } }
+    .ci-left {
+      background:linear-gradient(135deg,var(--green-dark),var(--green-mid));
+      padding:2rem; color:#fff; display:flex; flex-direction:column; justify-content:center;
+    }
+    .ci-crop-icon { font-size:4rem; margin-bottom:.8rem; }
+    .ci-left h2   { font-family:var(--font-head); font-size:1.8rem; margin-bottom:.3rem; }
+    .ci-left .sci { font-size:.88rem; opacity:.78; font-style:italic; margin-bottom:1rem; }
+    .ci-left p    { font-size:.9rem; opacity:.85; line-height:1.65; }
+    .ci-right     { padding:2rem; }
+    .ci-row { display:flex; justify-content:space-between; align-items:center; padding:.6rem 0; border-bottom:1px solid #f0f0f0; font-size:.9rem; }
+    .ci-row:last-child { border:none; }
+    .ci-key { color:#777; font-size:.85rem; }
+    .ci-val { font-weight:600; color:var(--green-dark); text-align:right; font-size:.88rem; }
+    .disease-tags { margin-top:.8rem; display:flex; flex-wrap:wrap; gap:.4rem; }
+    .dtag { background:var(--green-pale); color:var(--green-dark); border-radius:20px; padding:3px 10px; font-size:.76rem; font-weight:600; }
+    .dtag.warn   { background:#fff8e1; color:#e65100; }
+    .dtag.danger { background:#fce4ec; color:#c62828; }
+    .guidance-card { background:#fff; border-radius:var(--radius); box-shadow:0 4px 16px rgba(0,0,0,.09); padding:1.6rem; transition:transform .2s; }
+    .guidance-card:hover { transform:translateY(-4px); }
+    .gc-header { display:flex; align-items:center; gap:12px; margin-bottom:1rem; }
+    .gc-icon { width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; }
+    .gc-icon.green  { background:linear-gradient(135deg,#a5d6a7,#388e3c); }
+    .gc-icon.yellow { background:linear-gradient(135deg,#fff59d,#f9a825); }
+    .gc-icon.blue   { background:linear-gradient(135deg,#90caf9,#1565c0); }
+    .gc-icon.teal   { background:linear-gradient(135deg,#80cbc4,#00695c); }
+    .gc-header h4 { font-family:var(--font-head); color:var(--green-dark); font-size:1.05rem; }
+    .guidance-card ul { padding-left:1.1rem; color:#555; font-size:.87rem; line-height:1.85; }
+    .compare-table { width:100%; border-collapse:collapse; background:#fff; border-radius:var(--radius); overflow:hidden; box-shadow:0 4px 16px rgba(0,0,0,.09); }
+    .compare-table th { background:var(--green-dark); color:#fff; padding:1rem 1.2rem; text-align:left; font-size:.88rem; font-family:var(--font-head); }
+    .compare-table td { padding:.85rem 1.2rem; border-bottom:1px solid #f0f0f0; font-size:.88rem; color:#555; }
+    .compare-table tr:last-child td { border:none; }
+    .compare-table tr:hover td { background:var(--green-pale); }
+    .compare-table .ck { color:var(--green-mid); font-weight:700; font-size:1rem; }
+    .compare-table .cx { color:#bbb; font-size:1rem; }
+    .quick-links { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin-top:2rem; }
+    .ql-card {
+      background:linear-gradient(135deg,var(--green-dark),var(--green-mid));
+      border-radius:var(--radius); padding:1.5rem; text-align:center; color:#fff;
+      text-decoration:none; transition:transform .2s, opacity .2s; display:block;
+    }
+    .ql-card:hover { transform:translateY(-4px); opacity:.92; }
+    .ql-card .ql-icon { font-size:2rem; margin-bottom:.5rem; }
+    .ql-card h4 { font-family:var(--font-head); font-size:1rem; margin-bottom:.3rem; }
+    .ql-card p  { font-size:.82rem; opacity:.82; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">🌿 Plantelligence</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="detect.html">Detect</a></li>
+    <li><a href="features.html" class="active">Features</a></li>
+    <li><a href="weather.html">Weather</a></li>
+    <li><a href="blog.html">Tips</a></li>
+    <li><a href="calender.html">Calender</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="feat-hero">
+  <div class="feat-hero-inner">
+    <h1 class="fade-up">🌱 Our Project Features</h1>
+    <p class="fade-up delay-1">Everything you need for smarter, healthier, and more productive farming</p>
+  </div>
+</div>
+
+<div class="page-content">
+
+  <div class="section">
+    <h2 class="section-title">⭐ Core Features</h2>
+    <div class="feat-grid">
+      <div class="feat-card fade-up delay-1">
+        <div class="feat-icon">🌿</div>
+        <h3>Disease Detection</h3>
+        <p>Upload a diseased plant image and our AI system will instantly identify the problem.</p>
+        <ul class="feat-list">
+          <li>Identify the crop name</li>
+          <li>Detect the disease accurately</li>
+          <li>Show all visible symptoms</li>
+          <li>Provide treatment methods</li>
+          <li>Suggest prevention techniques</li>
+        </ul>
+      </div>
+      <div class="feat-card fade-up delay-2">
+        <div class="feat-icon">🪡</div>
+        <h3>Supported Crops</h3>
+        <p>The system currently supports 7 major crops with multiple disease records per crop.</p>
+        <ul class="feat-list">
+          <li>🍅 Tomato</li>
+          <li>🥔 Potato</li>
+          <li>🍚 Rice</li>
+          <li>🌾 Wheat</li>
+          <li>🌶️ Chilli</li>
+          <li>🪡 Cotton</li>
+          <li>🥭 Mango</li>
+        </ul>
+      </div>
+      <div class="feat-card fade-up delay-3">
+        <div class="feat-icon">📋</div>
+        <h3>Complete Plant Information</h3>
+        <p>After detection, the system also shows detailed information about the crop.</p>
+        <ul class="feat-list">
+          <li>Scientific name</li>
+          <li>Growth duration (days/months)</li>
+          <li>Suitable growing season</li>
+          <li>Recommended soil type</li>
+          <li>Water requirements</li>
+          <li>Common uses of the crop</li>
+        </ul>
+      </div>
+      <div class="feat-card fade-up delay-4">
+        <div class="feat-icon">🚜</div>
+        <h3>Smart Agricultural Guidance</h3>
+        <p>Farmers receive proper guidance on managing their crops through every stage.</p>
+        <ul class="feat-list">
+          <li>Fertilizer suggestions (NPK)</li>
+          <li>Pesticide recommendations</li>
+          <li>Organic treatment methods</li>
+          <li>Preventive crop management</li>
+          <li>Seasonal farming calendar</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="padding-top:0;">
+    <h2 class="section-title">🌾 Crop Information Database</h2>
+    <div class="crop-tabs-nav">
+      <button class="ctab active" onclick="showCrop('cotton',this)">🪡 Cotton</button>
+      <button class="ctab" onclick="showCrop('rice',this)">🍚 Rice</button>
+      <button class="ctab" onclick="showCrop('tomato',this)">🍅 Tomato</button>
+      <button class="ctab" onclick="showCrop('potato',this)">🥔 Potato</button>
+      <button class="ctab" onclick="showCrop('wheat',this)">🌾 Wheat</button>
+      <button class="ctab" onclick="showCrop('chilli',this)">🌶️ Chilli</button>
+      <button class="ctab" onclick="showCrop('mango',this)">🥭 Mango</button>
+    </div>
