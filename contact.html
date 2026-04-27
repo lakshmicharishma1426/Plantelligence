@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact & About — Plantelligence</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    .contact-hero {
+      background:linear-gradient(135deg,#1a4a1a,#2d7a2d);
+      padding:3rem 2.5rem 2.5rem; position:relative; overflow:hidden;
+    }
+    .contact-hero::before {
+      content:''; position:absolute; inset:0;
+      background:url('https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=1400&q=50') center/cover;
+      opacity:.12;
+    }
+    .contact-hero-inner { position:relative; max-width:1200px; margin:0 auto; }
+    .contact-hero h1 { font-family:var(--font-head); color:#fff; font-size:2.6rem; }
+    .contact-hero p  { color:rgba(255,255,255,.78); margin-top:.5rem; }
+    .about-grid { display:grid; grid-template-columns:1.1fr 1fr; gap:3rem; align-items:center; }
+    @media(max-width:720px){ .about-grid { grid-template-columns:1fr; } }
+    .about-text h2 { font-family:var(--font-head); color:var(--green-dark); font-size:2rem; margin-bottom:1rem; }
+    .about-text p  { color:#555; line-height:1.75; margin-bottom:1rem; font-size:.96rem; }
+    .stat-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; }
+    .stat-box {
+      background:linear-gradient(135deg,var(--green-pale),#f1f8e9);
+      border-radius:14px; padding:1.2rem; text-align:center;
+      border-bottom:3px solid var(--green-light);
+    }
+    .stat-num { font-family:var(--font-head); font-size:2rem; color:var(--green-dark); }
+    .stat-lbl { font-size:.82rem; color:#666; margin-top:.2rem; }
+    .team-card {
+      background:#fff; border-radius:var(--radius);
+      box-shadow:0 4px 18px rgba(0,0,0,.09); overflow:hidden;
+      text-align:center; transition:transform .25s;
+    }
+    .team-card:hover { transform:translateY(-5px); }
+    .team-avatar { height:110px; display:flex; align-items:center; justify-content:center; font-size:3.5rem; }
+    .av-green  { background:linear-gradient(135deg,#a5d6a7,#2e7d32); }
+    .av-teal   { background:linear-gradient(135deg,#80cbc4,#00695c); }
+    .av-yellow { background:linear-gradient(135deg,#fff59d,#f57f17); }
+    .av-blue   { background:linear-gradient(135deg,#90caf9,#1565c0); }
+    .team-info { padding:1rem 1rem 1.2rem; }
+    .team-info h4 { font-family:var(--font-head); color:var(--green-dark); font-size:1.05rem; }
+    .team-info .role { font-size:.82rem; color:var(--green-mid); font-weight:600;
+                       text-transform:uppercase; letter-spacing:.04em; margin:.2rem 0 .4rem; }
+    .team-info p { font-size:.83rem; color:#777; line-height:1.5; }
+    .contact-form-card { background:#fff; border-radius:20px; box-shadow:var(--shadow); padding:2.5rem; }
+    .form-group { margin-bottom:1.2rem; }
+    .form-group label { display:block; font-weight:600; font-size:.88rem; color:var(--green-dark); margin-bottom:.4rem; }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width:100%; padding:.8rem 1rem; border:1.5px solid #ddd;
+      border-radius:10px; font-family:var(--font-body); font-size:.93rem;
+      outline:none; transition:border .2s; background:#fafafa;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus { border-color:var(--green-mid); background:#fff; }
+    .form-group textarea { resize:vertical; min-height:120px; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    @media(max-width:560px){ .form-row { grid-template-columns:1fr; } }
+    .info-box { background:linear-gradient(135deg,var(--green-dark),var(--green-mid)); border-radius:20px; padding:2rem; color:#fff; }
+    .info-box h3 { font-family:var(--font-head); font-size:1.4rem; margin-bottom:1.2rem; }
+    .info-item { display:flex; gap:14px; align-items:flex-start; margin-bottom:1.2rem; }
+    .info-item .ii-icon { font-size:1.4rem; flex-shrink:0; margin-top:2px; }
+    .info-item .ii-text strong { display:block; font-size:.95rem; margin-bottom:.15rem; }
+    .info-item .ii-text span   { font-size:.85rem; opacity:.8; }
+    .social-row { display:flex; gap:.8rem; margin-top:1.5rem; }
+    .social-btn {
+      background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.3);
+      color:#fff; padding:8px 16px; border-radius:50px; font-size:.85rem;
+      text-decoration:none; transition:background .2s; font-family:var(--font-body);
+    }
+    .social-btn:hover { background:rgba(255,255,255,.25); }
+    .success-msg {
+      display:none; background:#e8f5e9; border:1px solid #a5d6a7;
+      border-radius:10px; padding:1rem 1.2rem; margin-top:1rem;
+      color:var(--green-dark); font-weight:500;
+    }
+    .faq-item { border-bottom:1px solid #e8e8e8; }
+    .faq-q {
+      width:100%; background:none; border:none; text-align:left;
+      padding:1rem 0; font-family:var(--font-body); font-size:.95rem;
+      font-weight:600; color:var(--green-dark); cursor:pointer;
+      display:flex; justify-content:space-between; align-items:center;
+    }
+    .faq-q:hover { color:var(--green-mid); }
+    .faq-a { max-height:0; overflow:hidden; transition:max-height .3s ease, padding .3s; font-size:.9rem; color:#555; line-height:1.65; }
+    .faq-a.open { max-height:200px; padding-bottom:1rem; }
+    .faq-arrow { transition:transform .3s; font-size:.8rem; }
+    .faq-arrow.open { transform:rotate(180deg); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">🌿 Plantelligence</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="detect.html">Detect</a></li>
+    <li><a href="features.html">Features</a></li>
+    <li><a href="weather.html">Weather</a></li>
+    <li><a href="blog.html">Tips</a></li>
+    <li><a href="calender.html">Calender</a></li>
+    <li><a href="contact.html" class="active">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="contact-hero">
+  <div class="contact-hero-inner">
+    <h1 class="fade-up">📬 Contact & About Us</h1>
+    <p class="fade-up delay-1">Meet the team behind Plantelligence and get in touch</p>
+  </div>
+</div>
+
+<div class="page-content">
+
+  <div class="section">
+    <div class="about-grid">
+      <div class="about-text fade-up">
+        <h2>About Plantelligence</h2>
+        <p>Plantelligence is an AI-powered crop disease detection system built for farmers in Andhra Pradesh. By combining machine learning with agricultural expertise, we help farmers identify diseases early, reduce crop loss, and access smart farming guidance — all in one place.</p>
+        <p>Our system supports 7 major crops including Cotton, Rice, Chilli, Tomato, Potato, Wheat, and Mango, covering dozens of disease conditions with treatment recommendations and preventive care guides.</p>
+        <a href="features.html" class="btn btn-primary" style="margin-top:.5rem;">Explore Features →</a>
+      </div>
+      <div class="stat-grid fade-up delay-2">
+        <div class="stat-box"><div class="stat-num">7+</div><div class="stat-lbl">Supported Crops</div></div>
+        <div class="stat-box"><div class="stat-num">50+</div><div class="stat-lbl">Disease Types Detected</div></div>
+        <div class="stat-box"><div class="stat-num">99%</div><div class="stat-lbl">Peak Accuracy</div></div>
+        <div class="stat-box"><div class="stat-num">5K+</div><div class="stat-lbl">Farmers Helped</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="padding-top:0;">
+    <h2 class="section-title">👥 Meet the Team</h2>
+    <div class="grid-4">
+      <div class="team-card fade-up delay-1">
+        <div class="team-avatar av-green">🧑‍💻</div>
+        <div class="team-info"><h4>Arjun Reddy</h4><div class="role">Lead Developer</div><p>Full-stack developer & AI integration specialist.</p></div>
+      </div>
+      <div class="team-card fade-up delay-2">
+        <div class="team-avatar av-teal">👩‍🔬</div>
+        <div class="team-info"><h4>Priya Sharma</h4><div class="role">Agronomist</div><p>MSc Agriculture, expert in crop disease management.</p></div>
+      </div>
+      <div class="team-card fade-up delay-3">
+        <div class="team-avatar av-yellow">🧑‍🎨</div>
+        <div class="team-info"><h4>Kiran Babu</h4><div class="role">UI/UX Designer</div><p>Passionate about building farmer-friendly interfaces.</p></div>
+      </div>
+      <div class="team-card fade-up delay-4">
+        <div class="team-avatar av-blue">👩‍💻</div>
+        <div class="team-info"><h4>Sravani Devi</h4><div class="role">ML Engineer</div><p>Trains and fine-tunes plant disease detection models.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="padding-top:0;">
+    <h2 class="section-title">✉️ Get In Touch</h2>
+    <div class="grid-2">
+
+      <div class="contact-form-card fade-up">
+        <h3 style="font-family:var(--font-head);color:var(--green-dark);margin-bottom:1.5rem;">Send us a message</h3>
+        <div class="form-row">
+          <div class="form-group"><label>First Name</label><input type="text" placeholder="e.g. Ravi"/></div>
+          <div class="form-group"><label>Last Name</label><input type="text" placeholder="e.g. Kumar"/></div>
+        </div>
+        <div class="form-group"><label>Email Address</label><input type="email" placeholder="your@email.com"/></div>
+        <div class="form-group">
+          <label>Subject</label>
+          <select>
+            <option>Disease Detection Query</option>
+            <option>Feature Request</option>
+            <option>Technical Support</option>
+            <option>Partnership / Collaboration</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Message</label><textarea placeholder="Tell us how we can help…"></textarea></div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="submitForm()">
+          Send Message 📨
+        </button>
+        <div class="success-msg" id="successMsg">
+          ✅ Thank you! Your message has been received. We'll reply within 24 hours.
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:1.5rem;">
+        <div class="info-box fade-up delay-1">
+          <h3>Contact Info</h3>
+          <div class="info-item"><div class="ii-icon">📧</div><div class="ii-text"><strong>Email</strong><span>hello@plantelligence.in</span></div></div>
+          <div class="info-item"><div class="ii-icon">📞</div><div class="ii-text"><strong>Phone / WhatsApp</strong><span>+91 9876 543 210</span></div></div>
+          <div class="info-item"><div class="ii-icon">📍</div><div class="ii-text"><strong>Location</strong><span>Guntur, Andhra Pradesh, India</span></div></div>
+          <div class="info-item"><div class="ii-icon">⏰</div><div class="ii-text"><strong>Support Hours</strong><span>Mon–Sat, 9 AM – 6 PM IST</span></div></div>
+          <div class="social-row">
+            <a href="#" class="social-btn">🌐 Website</a>
+            <a href="#" class="social-btn">📘 Facebook</a>
+            <a href="#" class="social-btn">📸 Instagram</a>
+          </div>
+        </div>
+
+        <div style="background:#fff;border-radius:var(--radius);padding:1.6rem;box-shadow:0 4px 16px rgba(0,0,0,.08);" class="fade-up delay-2">
+          <h4 style="font-family:var(--font-head);color:var(--green-dark);margin-bottom:.8rem;">❓ Frequently Asked Questions</h4>
+          <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)">Is Plantelligence free to use? <span class="faq-arrow">▼</span></button>
+            <div class="faq-a">Yes! The core disease detection feature is completely free for all farmers. Premium features may be added in the future.</div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)">Which crops are supported? <span class="faq-arrow">▼</span></button>
+            <div class="faq-a">We currently support Cotton, Rice, Tomato, Potato, Wheat, Chilli, and Mango — with more crops being added regularly.</div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)">How accurate is the detection? <span class="faq-arrow">▼</span></button>
+            <div class="faq-a">Our AI model achieves up to 99% confidence on well-lit, clear crop images. Accuracy may vary in poor lighting or blurry images.</div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)">Can I use it on my phone? <span class="faq-arrow">▼</span></button>
+            <div class="faq-a">Absolutely. Plantelligence is fully responsive and works on any smartphone browser — no app download needed.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  © 2026 Plantelligence · Built for farmers of Andhra Pradesh · <a href="contact.html">Contact Us</a>
+</footer>
+
+<script>
+function submitForm() {
+  document.getElementById('successMsg').style.display = 'block';
+  setTimeout(() => document.getElementById('successMsg').style.display='none', 5000);
+}
+function toggleFaq(btn) {
+  const answer = btn.nextElementSibling;
+  const arrow  = btn.querySelector('.faq-arrow');
+  const isOpen = answer.classList.toggle('open');
+  arrow.classList.toggle('open', isOpen);
+}
+</script>
+</body>
+</html>
