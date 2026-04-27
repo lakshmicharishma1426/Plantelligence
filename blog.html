@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Farmer Tips & Blog — Plantelligence</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    .blog-hero {
+      background: linear-gradient(135deg, #1b5e20, #33691e);
+      padding: 3rem 2.5rem 2.5rem; position:relative; overflow:hidden;
+    }
+    .blog-hero::before {
+      content:''; position:absolute; inset:0;
+      background:url('https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1400&q=50') center/cover;
+      opacity:.15;
+    }
+    .blog-hero-inner { position:relative; max-width:1200px; margin:0 auto; }
+    .blog-hero h1 { font-family:var(--font-head); color:#fff; font-size:2.6rem; }
+    .blog-hero p  { color:rgba(255,255,255,.78); margin-top:.5rem; font-size:1.05rem; }
+    .search-wrap { position:relative; max-width:500px; margin-top:1.5rem; }
+    .search-wrap input {
+      width:100%; padding:.85rem 1.2rem .85rem 3rem;
+      border:none; border-radius:50px; font-size:.95rem;
+      outline:none; font-family:var(--font-body);
+      box-shadow:0 4px 20px rgba(0,0,0,.2);
+    }
+    .search-wrap .search-icon { position:absolute; left:1rem; top:50%; transform:translateY(-50%); font-size:1.1rem; }
+    .cat-pills { display:flex; flex-wrap:wrap; gap:.6rem; margin-bottom:2rem; }
+    .pill {
+      padding:6px 18px; border-radius:50px; font-size:.83rem; font-weight:600;
+      cursor:pointer; border:2px solid var(--green-mid); color:var(--green-mid);
+      background:transparent; transition:all .2s; font-family:var(--font-body);
+    }
+    .pill:hover, .pill.active { background:var(--green-mid); color:#fff; }
+    .featured-post {
+      background:#fff; border-radius:20px; overflow:hidden;
+      box-shadow:var(--shadow); display:grid;
+      grid-template-columns:1fr 1fr; gap:0;
+    }
+    @media(max-width:680px){ .featured-post { grid-template-columns:1fr; } }
+    .featured-img {
+      background:linear-gradient(135deg,var(--green-mid),#1b5e20);
+      display:flex; align-items:center; justify-content:center;
+      font-size:6rem; min-height:240px;
+    }
+    .featured-body { padding:2rem 2rem 1.6rem; }
+    .featured-label { font-size:.78rem; font-weight:700; color:var(--green-mid);
+                       text-transform:uppercase; letter-spacing:.08em; margin-bottom:.6rem; }
+    .featured-body h2 { font-family:var(--font-head); font-size:1.6rem; color:#1a3a1a; line-height:1.3; }
+    .featured-body p  { color:#555; margin:.7rem 0 1.2rem; font-size:.95rem; line-height:1.65; }
+    .post-meta { display:flex; gap:1.2rem; font-size:.82rem; color:#888; flex-wrap:wrap; }
+    .blog-card {
+      background:#fff; border-radius:var(--radius); overflow:hidden;
+      box-shadow:0 4px 18px rgba(0,0,0,.1); transition:transform .25s, box-shadow .25s;
+      display:flex; flex-direction:column;
+    }
+    .blog-card:hover { transform:translateY(-5px); box-shadow:0 12px 32px rgba(0,0,0,.15); }
+    .blog-card-thumb { height:140px; display:flex; align-items:center; justify-content:center; font-size:4rem; }
+    .thumb-green  { background:linear-gradient(135deg,#a5d6a7,#388e3c); }
+    .thumb-yellow { background:linear-gradient(135deg,#fff59d,#f9a825); }
+    .thumb-blue   { background:linear-gradient(135deg,#90caf9,#1565c0); }
+    .thumb-brown  { background:linear-gradient(135deg,#d7ccc8,#795548); }
+    .thumb-teal   { background:linear-gradient(135deg,#80cbc4,#00695c); }
+    .blog-card-body { padding:1.2rem; flex:1; display:flex; flex-direction:column; }
+    .blog-card-body h3 { font-family:var(--font-head); font-size:1.1rem; color:#1a3a1a; line-height:1.35; margin-bottom:.5rem; }
+    .blog-card-body p  { color:#666; font-size:.87rem; line-height:1.6; flex:1; }
+    .blog-card-footer  { display:flex; justify-content:space-between; align-items:center;
+                          margin-top:1rem; padding-top:.8rem; border-top:1px solid #f0f0f0; }
+    .read-link { color:var(--green-mid); font-weight:600; font-size:.85rem; text-decoration:none; }
+    .read-link:hover { color:var(--green-dark); }
+    .ticker-wrap { background:var(--green-dark); padding:.7rem 0; overflow:hidden; }
+    .ticker-inner { display:flex; gap:4rem; animation:ticker 30s linear infinite; width:max-content; }
+    .ticker-inner:hover { animation-play-state:paused; }
+    .ticker-item { color:rgba(255,255,255,.85); font-size:.88rem; white-space:nowrap; }
+    @keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+    .newsletter {
+      background:linear-gradient(135deg,var(--green-dark),var(--green-mid));
+      border-radius:20px; padding:2.5rem; text-align:center; color:#fff;
+    }
+    .newsletter h3 { font-family:var(--font-head); font-size:1.7rem; margin-bottom:.5rem; }
+    .newsletter p  { opacity:.85; margin-bottom:1.5rem; }
+    .nl-form { display:flex; gap:.7rem; justify-content:center; flex-wrap:wrap; }
+    .nl-form input {
+      padding:.75rem 1.2rem; border-radius:50px; border:none;
+      font-size:.95rem; font-family:var(--font-body); width:280px; outline:none;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">🌿 Plantelligence</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="detect.html">Detect</a></li>
+    <li><a href="features.html">Features</a></li>
+    <li><a href="weather.html">Weather</a></li>
+    <li><a href="blog.html" class="active">Tips</a></li>
+    <li><a href="calender.html">Calender</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="ticker-wrap">
+  <div class="ticker-inner">
+    <span class="ticker-item">🌱 Water cotton in the morning to reduce fungal risk</span>
+    <span class="ticker-item">🧪 Test soil pH every season for best yields</span>
+    <span class="ticker-item">☀️ Mulching reduces water loss by up to 40%</span>
+    <span class="ticker-item">🐛 Neem oil spray is effective against aphids and whitefly</span>
+    <span class="ticker-item">💧 Drip irrigation saves 30–50% water vs flood methods</span>
+    <span class="ticker-item">🌾 Crop rotation breaks pest and disease cycles</span>
+    <span class="ticker-item">🌱 Water cotton in the morning to reduce fungal risk</span>
+    <span class="ticker-item">🧪 Test soil pH every season for best yields</span>
+    <span class="ticker-item">☀️ Mulching reduces water loss by up to 40%</span>
+    <span class="ticker-item">🐛 Neem oil spray is effective against aphids and whitefly</span>
+    <span class="ticker-item">💧 Drip irrigation saves 30–50% water vs flood methods</span>
+    <span class="ticker-item">🌾 Crop rotation breaks pest and disease cycles</span>
+  </div>
+</div>
+
+<div class="blog-hero">
+  <div class="blog-hero-inner">
+    <h1 class="fade-up">🌿 Farmer Tips & Blog</h1>
+    <p class="fade-up delay-1">Expert advice, seasonal guides and smart farming techniques</p>
+    <div class="search-wrap fade-up delay-2">
+      <span class="search-icon">🔍</span>
+      <input type="text" placeholder="Search articles, tips, crops…" oninput="filterPosts(this.value)"/>
+    </div>
+  </div>
+</div>
+
+<div class="page-content">
+  <div class="section">
+    <div class="cat-pills">
+      <button class="pill active" onclick="setCategory('all',this)">All</button>
+      <button class="pill" onclick="setCategory('disease',this)">🦠 Disease Control</button>
+      <button class="pill" onclick="setCategory('soil',this)">🌱 Soil Health</button>
+      <button class="pill" onclick="setCategory('water',this)">💧 Irrigation</button>
+      <button class="pill" onclick="setCategory('pest',this)">🐛 Pest Management</button>
+      <button class="pill" onclick="setCategory('harvest',this)">🌾 Harvest Tips</button>
+    </div>
+
+    <div class="featured-post fade-up" style="margin-bottom:2.5rem;">
+      <div class="featured-img">🌾</div>
+      <div class="featured-body">
+        <div class="featured-label">⭐ Featured Article</div>
+        <h2>How to Identify Cotton Rust Before It Spreads</h2>
+        <p>Cotton rust is one of the most devastating fungal diseases in Andhra Pradesh, capable of wiping out up to 70% of yield if undetected. Learn the early warning signs, and the most effective organic and chemical treatments farmers use today.</p>
+        <div class="post-meta">
+          <span>📅 April 5, 2026</span>
+          <span>👤 Dr. Ravi Kumar</span>
+          <span>⏱️ 8 min read</span>
+          <span class="badge badge-green">Disease Control</span>
+        </div>
+        <a href="#" class="btn btn-primary" style="margin-top:1.2rem;">Read Article →</a>
+      </div>
+    </div>
+
+    <h2 class="section-title">📰 Latest Articles</h2>
+    <div class="grid-3" id="blogGrid">
+      <div class="blog-card fade-up delay-1" data-cat="soil">
+        <div class="blog-card-thumb thumb-green">🌱</div>
+        <div class="blog-card-body">
+          <span class="badge badge-green" style="margin-bottom:.6rem;">Soil Health</span>
+          <h3>5 Ways to Improve Soil Fertility Naturally</h3>
+          <p>Compost, green manure, and vermicomposting techniques that AP farmers swear by.</p>
+          <div class="blog-card-footer">
+            <span style="font-size:.8rem;color:#aaa;">Mar 28 · 5 min</span>
+            <a href="#" class="read-link">Read →</a>
+          </div>
+        </div>
+      </div>
+      <div class="blog-card fade-up delay-2" data-cat="water">
+        <div class="blog-card-thumb thumb-blue">💧</div>
+        <div class="blog-card-body">
+          <span class="badge badge-blue" style="margin-bottom:.6rem;">Irrigation</span>
+          <h3>Drip vs Sprinkler: Which Suits Your Crop?</h3>
+          <p>A practical guide for choosing the right irrigation method for rice, cotton, and chilli.</p>
+          <div class="blog-card-footer">
+            <span style="font-size:.8rem;color:#aaa;">Mar 20 · 6 min</span>
+            <a href="#" class="read-link">Read →</a>
+          </div>
+        </div>
+      </div>
+      <div class="blog-card fade-up delay-3" data-cat="pest">
+        <div class="blog-card-thumb thumb-yellow">🐛</div>
+        <div class="blog-card-body">
+          <span class="badge badge-yellow" style="margin-bottom:.6rem;">Pest Management</span>
+          <h3>Organic Pesticides: Neem, Garlic & Chilli Sprays</h3>
+          <p>Homemade organic spray recipes that are cost-effective and safe for the environment.</p>
+          <div class="blog-card-footer">
+            <span style="font-size:.8rem;color:#aaa;">Mar 15 · 4 min</span>
+            <a href="#" class="read-link">Read →</a>
+          </div>
+        </div>
+      </div>
+      <div class="blog-card fade-up delay-1" data-cat="harvest">
+        <div class="blog-card-thumb thumb-teal">🌾</div>
+        <div class="blog-card-body">
+          <span class="badge badge-green" style="margin-bottom:.6rem;">Harvest Tips</span>
+          <h3>Best Time to Harvest Mango for Maximum Shelf Life</h3>
+          <p>Timing, colour cues, and post-harvest storage tips to keep mangoes fresh longer.</p>
+          <div class="blog-card-footer">
+            <span style="font-size:.8rem;color:#aaa;">Mar 10 · 5 min</span>
+            <a href="#" class="read-link">Read →</a>
+          </div>
+        </div>
+      </div>
+      <div class="blog-card fade-up delay-2" data-cat="disease">
+        <div class="blog-card-thumb thumb-brown">🦠</div>
+        <div class="blog-card-body">
+          <span class="badge badge-yellow" style="margin-bottom:.6rem;">Disease Control</span>
+          <h3>Powdery Mildew on Chilli: Prevention & Cure</h3>
+          <p>Step-by-step treatment guide including fungicide schedules and resistant varieties.</p>
+          <div class="blog-card-footer">
+            <span style="font-size:.8rem;color:#aaa;">Mar 4 · 7 min</span>
+            <a href="#" class="read-link">Read →</a>
+          </div>
+        </div>
+      </div>
+      <div class="blog-card fade-up delay-3" data-cat="soil">
+        <div class="blog-card-thumb thumb-green">🧪</div>
+        <div class="blog-card-body">
+          <span class="badge badge-green" style="margin-bottom:.6rem;">Soil Health</span>
+          <h3>Reading Your Soil Test Report: A Farmer's Guide</h3>
+          <p>Understanding NPK numbers, pH values and micronutrient levels in plain language.</p>
+          <div class="blog-card-footer">
+            <span style="font-size:.8rem;color:#aaa;">Feb 25 · 6 min</span>
+            <a href="#" class="read-link">Read →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="newsletter fade-up" style="margin-top:3rem;">
+      <h3>📬 Get Weekly Farming Tips</h3>
+      <p>Join 5,000+ farmers receiving free expert advice every Monday morning.</p>
+      <div class="nl-form">
+        <input type="email" placeholder="Enter your email address"/>
+        <button class="btn btn-primary">Subscribe Free</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  © 2026 Plantelligence · Built for farmers of Andhra Pradesh · <a href="contact.html">Contact Us</a>
+</footer>
+
+<script>
+function setCategory(cat, btn) {
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#blogGrid .blog-card').forEach(card => {
+    card.style.display = (cat === 'all' || card.dataset.cat === cat) ? '' : 'none';
+  });
+}
+function filterPosts(q) {
+  const term = q.toLowerCase();
+  document.querySelectorAll('#blogGrid .blog-card').forEach(card => {
+    card.style.display = card.innerText.toLowerCase().includes(term) ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>
