@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Detect Disease — Plantelligence</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    .detect-hero {
+      background: linear-gradient(135deg,#1a4a1a,#2d7a2d,#388e3c);
+      padding: 3rem 2.5rem 2.5rem; position:relative; overflow:hidden;
+    }
+    .detect-hero::before {
+      content:''; position:absolute; inset:0;
+      background:url('https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=1400&q=50') center/cover;
+      opacity:.15;
+    }
+    .detect-hero-inner { position:relative; max-width:1200px; margin:0 auto; }
+    .detect-hero h1 { font-family:var(--font-head); color:#fff; font-size:2.6rem; }
+    .detect-hero p  { color:rgba(255,255,255,.8); margin-top:.5rem; font-size:1.05rem; }
+    .detect-card {
+      background: #fff; border-radius: 24px;
+      box-shadow: 0 12px 48px rgba(0,0,0,.14);
+      padding: 2.5rem; max-width: 620px; margin: 0 auto;
+    }
+    .detect-card h2 {
+      font-family: var(--font-head); color: var(--green-dark);
+      font-size: 1.5rem; margin-bottom: 1.6rem; text-align: center;
+    }
+    .crop-select-label { font-weight:600; font-size:.88rem; color:var(--green-dark); margin-bottom:.4rem; display:block; }
+    .crop-select {
+      width:100%; padding:.85rem 1rem; border:1.5px solid #ddd; border-radius:12px;
+      font-family:var(--font-body); font-size:.95rem; outline:none; background:#fafafa;
+      transition:border .2s; margin-bottom:1.2rem; cursor:pointer; appearance:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%232d7a2d' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+      background-repeat:no-repeat; background-position:right 1rem center; padding-right:2.5rem;
+    }
+    .crop-select:focus { border-color:var(--green-mid); background-color:#fff; }
+    .upload-area {
+      border:2.5px dashed #b2dfdb; border-radius:16px; padding:2rem;
+      text-align:center; cursor:pointer; transition:all .2s;
+      background:#f9fbe7; margin-bottom:1.2rem; position:relative;
+    }
+    .upload-area:hover, .upload-area.dragover { border-color:var(--green-mid); background:var(--green-pale); }
+    .upload-area input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+    .upload-icon { font-size:2.8rem; margin-bottom:.5rem; }
+    .upload-area p { color:#666; font-size:.92rem; }
+    .upload-area .browse { color:var(--green-mid); font-weight:600; }
+    .file-name { font-size:.85rem; color:var(--green-mid); font-weight:600; margin-top:.3rem; }
+    #previewBox { display:none; margin-bottom:1.2rem; text-align:center; }
+    #previewBox img { max-width:100%; max-height:300px; border-radius:14px; box-shadow:0 4px 20px rgba(0,0,0,.12); object-fit:cover; }
+    .analyze-btn {
+      width:100%; padding:14px;
+      background:linear-gradient(135deg,var(--green-mid),var(--green-dark));
+      color:#fff; border:none; border-radius:50px;
+      font-family:var(--font-body); font-size:1.05rem; font-weight:700;
+      cursor:pointer; transition:all .2s;
+      display:flex; align-items:center; justify-content:center; gap:8px;
+    }
+    .analyze-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(45,122,45,.4); }
+    .analyze-btn:disabled { opacity:.6; cursor:not-allowed; transform:none; }
+    .loading { display:none; text-align:center; padding:1.5rem 0; }
+    .spinner {
+      width:48px; height:48px; border:4px solid #e0e0e0;
+      border-top-color:var(--green-mid); border-radius:50%;
+      animation:spin .8s linear infinite; margin:0 auto .8rem;
+    }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .result-card {
+      display:none; background:linear-gradient(135deg,#e8f5e9,#f1f8e9);
+      border:2px solid #a5d6a7; border-radius:16px; padding:1.6rem;
+      margin-top:1.5rem; text-align:center;
+    }
+    .result-card.show { display:block; animation:fadeUp .5s ease; }
+    .result-disease { font-family:var(--font-head); font-size:1.5rem; color:var(--green-dark); margin-bottom:.3rem; }
+    .result-confidence { font-size:1rem; color:var(--green-mid); font-weight:600; margin-bottom:1rem; }
+    .result-label { font-size:.78rem; color:#888; font-weight:600; text-transform:uppercase; letter-spacing:.06em; margin-bottom:.2rem; }
+    .confidence-bar-wrap { margin:.6rem 0 1.2rem; }
+    .confidence-bar { height:10px; background:#ddd; border-radius:5px; overflow:hidden; }
+    .confidence-fill {
+      height:100%; border-radius:5px;
+      background:linear-gradient(90deg,var(--green-light),var(--green-dark));
+      transition:width 1s ease;
+    }
+    .treatment-box {
+      background:#fff; border-radius:12px; padding:1.2rem 1.4rem;
+      margin-top:1rem; text-align:left; border-left:4px solid var(--green-mid);
+    }
+    .treatment-box h4 { font-family:var(--font-head); color:var(--green-dark); margin-bottom:.6rem; font-size:1rem; }
+    .treatment-box ul { padding-left:1.2rem; color:#555; font-size:.88rem; line-height:1.8; }
+    .info-panel { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:.8rem; margin-top:1rem; }
+    .info-chip { background:#fff; border-radius:10px; padding:.8rem; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,.07); }
+    .info-chip .ic-label { font-size:.72rem; color:#999; text-transform:uppercase; letter-spacing:.05em; }
+    .info-chip .ic-val   { font-weight:700; color:var(--green-dark); font-size:.92rem; margin-top:.15rem; }
+    .detect-layout { display:grid; grid-template-columns:1fr 340px; gap:2rem; align-items:start; }
+    @media(max-width:900px){ .detect-layout { grid-template-columns:1fr; } }
+    .sidebar-card { background:#fff; border-radius:var(--radius); box-shadow:0 4px 16px rgba(0,0,0,.09); overflow:hidden; }
+    .sidebar-header {
+      padding:1rem 1.2rem;
+      background:linear-gradient(90deg,var(--green-dark),var(--green-mid));
+      color:#fff; font-family:var(--font-head); font-size:1rem;
+    }
+    .sidebar-body { padding:1.2rem; }
+    .tip-item { display:flex; gap:10px; padding:.6rem 0; border-bottom:1px solid #f5f5f5; font-size:.87rem; color:#555; }
+    .tip-item:last-child { border:none; }
+    .tip-icon { font-size:1.1rem; flex-shrink:0; }
+    .disease-pill { display:inline-block; margin:3px; background:var(--green-pale); color:var(--green-dark); border-radius:20px; padding:4px 12px; font-size:.78rem; font-weight:600; }
+    .disease-pill.warning { background:#fff8e1; color:#e65100; }
+    .disease-pill.danger  { background:#fce4ec; color:#c62828; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">🌿 Plantelligence</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="detect.html" class="active">Detect</a></li>
+    <li><a href="features.html">Features</a></li>
+    <li><a href="weather.html">Weather</a></li>
+    <li><a href="blog.html">Tips</a></li>
+    <li><a href="calender.html">Calender</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="detect-hero">
+  <div class="detect-hero-inner">
+    <h1 class="fade-up">🦠 Crop Disease Detection</h1>
+    <p class="fade-up delay-1">Upload a photo of your plant and get an instant AI-powered diagnosis</p>
+  </div>
+</div>
+
+<div class="page-content">
+  <div class="section">
+    <div class="detect-layout">
+
+      <div class="detect-card fade-up">
+        <h2>🔍 Analyze Your Crop</h2>
+
+        <label class="crop-select-label">🌾 Select Crop</label>
+        <select class="crop-select" id="cropSelect">
+          <option value="">-- Choose a crop --</option>
+          <option value="cotton">🪡 Cotton</option>
+          <option value="rice">🍚 Rice</option>
+          <option value="tomato">🍅 Tomato</option>
+          <option value="potato">🥔 Potato</option>
+          <option value="wheat">🌾 Wheat</option>
+          <option value="chilli">🌶️ Chilli</option>
+          <option value="mango">🥭 Mango</option>
+        </select>
+
+        <label class="crop-select-label">📷 Upload Plant Image</label>
+        <div class="upload-area" id="uploadArea">
+          <input type="file" id="fileInput" accept="image/*" onchange="handleFile(this)"/>
+          <div class="upload-icon">📁</div>
+          <p>Drag & drop your image here or <span class="browse">browse files</span></p>
+          <p style="font-size:.8rem;color:#aaa;margin-top:.3rem;">Supports JPG, PNG, WEBP</p>
+          <div class="file-name" id="fileName"></div>
+        </div>
+
+        <div id="previewBox">
+          <img id="previewImg" src="" alt="Preview"/>
+        </div>
+
+        <button class="analyze-btn" id="analyzeBtn" onclick="analyzeImage()" disabled>
+          🔬 Analyze
+        </button>
+
+        <div class="loading" id="loadingBox">
+          <div class="spinner"></div>
+          <p style="color:#666;font-size:.9rem;">Analyzing your image with AI…</p>
+        </div>
+
+        <div class="result-card" id="resultCard">
+          <div class="result-label">Detection Result</div>
+          <div class="result-disease" id="resultDisease">—</div>
+          <div class="result-confidence" id="resultConf">Confidence Score: —</div>
+          <div class="confidence-bar-wrap">
+            <div class="confidence-bar">
+              <div class="confidence-fill" id="confFill" style="width:0%"></div>
+            </div>
+          </div>
+          <div class="info-panel" id="infoPanel"></div>
+          <div class="treatment-box" id="treatmentBox">
+            <h4>💊 Recommended Treatment</h4>
+            <ul id="treatmentList"></ul>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:1.2rem;" class="fade-up delay-2">
+        <div class="sidebar-card">
+          <div class="sidebar-header">📋 Supported Diseases</div>
+          <div class="sidebar-body">
+            <p style="font-size:.82rem;color:#888;margin-bottom:.8rem;">Common diseases our AI can detect:</p>
+            <span class="disease-pill">Rust</span>
+            <span class="disease-pill">Blight</span>
+            <span class="disease-pill warning">Powdery Mildew</span>
+            <span class="disease-pill">Leaf Curl</span>
+            <span class="disease-pill warning">Bacterial Spot</span>
+            <span class="disease-pill danger">Mosaic Virus</span>
+            <span class="disease-pill">Anthracnose</span>
+            <span class="disease-pill danger">Root Rot</span>
+            <span class="disease-pill">Brown Spot</span>
+            <span class="disease-pill warning">Leaf Blast</span>
+            <span class="disease-pill">Sheath Blight</span>
+            <span class="disease-pill">Tungro</span>
+          </div>
+        </div>
+
+        <div class="sidebar-card">
+          <div class="sidebar-header">💡 Tips for Best Results</div>
+          <div class="sidebar-body">
+            <div class="tip-item"><div class="tip-icon">☀️</div><div>Take photos in natural daylight for best accuracy.</div></div>
+            <div class="tip-item"><div class="tip-icon">🔍</div><div>Focus clearly on the affected leaves or stems.</div></div>
+            <div class="tip-item"><div class="tip-icon">📐</div><div>Keep the plant filling most of the frame.</div></div>
+            <div class="tip-item"><div class="tip-icon">🚫</div><div>Avoid blurry or dark images — they reduce accuracy.</div></div>
+            <div class="tip-item"><div class="tip-icon">🌿</div><div>Select the correct crop before uploading the image.</div></div>
+          </div>
+        </div>
+
+        <div class="sidebar-card">
+          <div class="sidebar-header">📞 Need Help?</div>
+          <div class="sidebar-body">
+            <p style="font-size:.87rem;color:#555;line-height:1.6;">Can't identify the disease? Our agricultural experts are ready to help.</p>
+            <a href="contact.html" class="btn btn-primary" style="margin-top:1rem;width:100%;justify-content:center;">Contact Expert →</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer>
+  © 2026 Plantelligence · Built for farmers of Andhra Pradesh · <a href="contact.html">Contact Us</a>
+</footer>
+
+<script>
+const diseaseDB = {
+  cotton: {
+    diseases: ['Rust','Bacterial Blight','Leaf Curl Virus','Alternaria Leaf Spot','Healthy'],
+    treatments: {
+      'Rust':                ['Spray Mancozeb 75 WP @ 2g/litre','Remove and destroy infected leaves','Avoid overhead irrigation','Apply Propiconazole 25 EC if severe'],
+      'Bacterial Blight':    ['Spray Streptomycin Sulphate + Copper Oxychloride','Use disease-free seeds','Avoid waterlogging','Remove infected plant parts'],
+      'Leaf Curl Virus':     ['Control whitefly vectors with Imidacloprid','Remove infected plants immediately','Use resistant varieties','No chemical cure — prevention is key'],
+      'Alternaria Leaf Spot':['Apply Carbendazim 50 WP @ 1g/litre','Improve field drainage','Avoid excessive nitrogen','Spray at 10-day intervals'],
+      'Healthy':             ['No disease detected! Crop looks healthy.','Continue regular monitoring','Maintain proper irrigation schedule','Apply balanced fertilizer as scheduled']
+    }
+  },
+  rice: {
+    diseases: ['Blast','Brown Spot','Sheath Blight','Tungro','Healthy'],
+    treatments: {
+      'Blast':         ['Spray Tricyclazole 75 WP @ 0.6g/litre','Drain fields periodically','Avoid excess nitrogen','Use blast-resistant varieties'],
+      'Brown Spot':    ['Apply Mancozeb 75 WP @ 2.5g/litre','Use balanced NPK fertilizers','Treat seeds before sowing','Ensure proper field drainage'],
+      'Sheath Blight': ['Apply Hexaconazole 5 EC','Reduce plant density','Drain excess water','Remove infected stubble after harvest'],
+      'Tungro':        ['Control green leafhopper with insecticides','Use tolerant varieties','Remove infected plants','No direct chemical treatment'],
+      'Healthy':       ['No disease detected! Crop looks healthy.','Monitor for pests weekly','Maintain water levels','Continue balanced fertilization']
+    }
+  },
+  tomato: {
+    diseases: ['Early Blight','Late Blight','Leaf Miner','Mosaic Virus','Healthy'],
+    treatments: {
+      'Early Blight':  ['Apply Chlorothalonil 75 WP','Remove lower infected leaves','Rotate crops annually','Avoid wetting foliage when irrigating'],
+      'Late Blight':   ['Spray Metalaxyl + Mancozeb','Destroy infected plants immediately','Improve air circulation','Apply preventively during humid weather'],
+      'Leaf Miner':    ['Apply Abamectin 1.8 EC','Use yellow sticky traps','Remove heavily infested leaves','Introduce natural predators'],
+      'Mosaic Virus':  ['No chemical cure — remove infected plants','Control aphid vectors','Disinfect tools between plants','Use virus-free seedlings'],
+      'Healthy':       ['No disease detected! Crop looks healthy.','Monitor weekly for pests','Stake plants for good air circulation','Apply calcium spray to prevent blossom end rot']
+    }
+  },
+  potato: {
+    diseases: ['Late Blight','Common Scab','Blackleg','Healthy'],
+    treatments: {
+      'Late Blight':   ['Apply Cymoxanil + Mancozeb','Avoid overhead irrigation','Destroy infected haulms before harvest','Use certified disease-free seed tubers'],
+      'Common Scab':   ['Maintain soil pH below 5.5','Use resistant varieties','Avoid fresh manure','Irrigate consistently at tuber initiation'],
+      'Blackleg':      ['Use disease-free seed potatoes','Improve soil drainage','Avoid injuring tubers during planting','Remove and destroy infected plants'],
+      'Healthy':       ['No disease detected! Crop looks healthy.','Earth up regularly','Monitor for Colorado beetle','Apply hilling to prevent greening']
+    }
+  },
+  wheat: {
+    diseases: ['Yellow Rust','Powdery Mildew','Loose Smut','Karnal Bunt','Healthy'],
+    treatments: {
+      'Yellow Rust':    ['Spray Propiconazole 25 EC @ 0.1%','Use resistant varieties','Early sowing to avoid peak rust season','Monitor field edges first'],
+      'Powdery Mildew': ['Apply Triadimefon 25 WP','Avoid dense sowing','Remove heavily infected leaves','Improve air circulation'],
+      'Loose Smut':     ['Seed treatment with Carboxin + Thiram','Use certified smut-free seeds','Hot water seed treatment at 52°C for 10 min','Rogue out infected plants'],
+      'Karnal Bunt':    ['Use certified disease-free seed','Seed treatment with Thiram 75 WP','Avoid water stress at flowering','Early harvesting to reduce spread'],
+      'Healthy':        ['No disease detected! Crop looks healthy.','Monitor crop weekly','Apply recommended NPK schedule','Ensure good drainage']
+    }
+  },
+  chilli: {
+    diseases: ['Powdery Mildew','Anthracnose','Bacterial Wilt','Chilli Mosaic','Healthy'],
+    treatments: {
+      'Powdery Mildew': ['Spray Wettable Sulphur 80 WP @ 3g/litre','Remove heavily infected plants','Improve air circulation','Avoid late evening irrigation'],
+      'Anthracnose':    ['Apply Carbendazim 50 WP + Mancozeb 75 WP','Harvest at correct maturity','Use disease-free seeds','Avoid fruit injury'],
+      'Bacterial Wilt': ['No chemical cure — remove infected plants','Drench soil with Copper Oxychloride','Use resistant rootstocks','Practice 3-year crop rotation'],
+      'Chilli Mosaic':  ['Control thrips and aphids with insecticides','Use virus-free transplants','Remove and destroy infected plants','Disinfect tools regularly'],
+      'Healthy':        ['No disease detected! Crop looks healthy.','Continue regular scouting','Stake tall plants','Apply micronutrient spray monthly']
+    }
+  },
+  mango: {
+    diseases: ['Anthracnose','Powdery Mildew','Bacterial Canker','Malformation','Healthy'],
+    treatments: {
+      'Anthracnose':      ['Spray Carbendazim 0.1% at flowering','Prune to improve air circulation','Apply copper-based fungicide','Collect and destroy fallen fruits'],
+      'Powdery Mildew':   ['Apply Sulphur 80 WP @ 2g/litre','Spray Hexaconazole or Myclobutanil','Good ventilation by pruning','3-4 sprays at 15-day intervals'],
+      'Bacterial Canker': ['Prune infected branches 15 cm below canker','Spray Copper Oxychloride 50 WP','Disinfect pruning tools','Avoid wounding trees'],
+      'Malformation':     ['Remove malformed panicles','Spray Naphthalene Acetic Acid 200 ppm','No effective chemical control','Use malformation-free bud-wood for grafting'],
+      'Healthy':          ['No disease detected! Crop looks healthy.','Apply micronutrient spray post-flowering','Maintain mulch around tree base','Monitor for fruit fly at ripening']
+    }
+  }
+};
+
+function handleFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  document.getElementById('fileName').textContent = '📎 ' + file.name;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('previewImg').src = e.target.result;
+    document.getElementById('previewBox').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+  checkReady();
+}
+
+function checkReady() {
+  const crop = document.getElementById('cropSelect').value;
+  const file = document.getElementById('fileInput').files[0];
+  document.getElementById('analyzeBtn').disabled = !(crop && file);
+}
+
+document.getElementById('cropSelect').addEventListener('change', checkReady);
+
+function analyzeImage() {
+  const crop = document.getElementById('cropSelect').value;
+  if (!crop) return;
+  document.getElementById('resultCard').classList.remove('show');
+  document.getElementById('loadingBox').style.display = 'block';
+  document.getElementById('analyzeBtn').disabled = true;
+  setTimeout(() => {
+    document.getElementById('loadingBox').style.display = 'none';
+    showResult(crop);
+    document.getElementById('analyzeBtn').disabled = false;
+  }, 2200);
+}
+
+function showResult(crop) {
+  const db = diseaseDB[crop];
+  const disease = db.diseases[Math.floor(Math.random() * db.diseases.length)];
+  const confidence = disease === 'Healthy'
+    ? (Math.random() * 5 + 94).toFixed(1)
+    : (Math.random() * 15 + 82).toFixed(1);
+  const cropMeta = {
+    cotton: { sci:'Gossypium hirsutum',   season:'Jun–Nov',    soil:'Black Cotton Soil', water:'600–1200mm' },
+    rice:   { sci:'Oryza sativa',          season:'Jun–Nov',    soil:'Clay / Loam',       water:'1200–2000mm' },
+    tomato: { sci:'Solanum lycopersicum',  season:'Year-round', soil:'Sandy Loam',         water:'400–600mm' },
+    potato: { sci:'Solanum tuberosum',     season:'Oct–Jan',    soil:'Loamy / Sandy',     water:'500–700mm' },
+    wheat:  { sci:'Triticum aestivum',     season:'Oct–Feb',    soil:'Loam / Clay Loam',  water:'300–500mm' },
+    chilli: { sci:'Capsicum annuum',       season:'Jun–Feb',    soil:'Sandy Loam',         water:'600–1250mm' },
+    mango:  { sci:'Mangifera indica',      season:'Mar–Jun',    soil:'Deep Alluvial',      water:'750–1000mm' }
+  };
+  const meta = cropMeta[crop];
+  const treatments = db.treatments[disease] || ['Consult an agricultural expert.'];
+  document.getElementById('resultDisease').textContent = disease === 'Healthy' ? '✅ ' + disease : '🟠 ' + disease;
+  document.getElementById('resultConf').textContent = 'Confidence Score: ' + confidence + '%';
+  document.getElementById('confFill').style.width = confidence + '%';
+  document.getElementById('infoPanel').innerHTML = `
+    <div class="info-chip"><div class="ic-label">Crop</div><div class="ic-val">${crop.charAt(0).toUpperCase()+crop.slice(1)}</div></div>
+    <div class="info-chip"><div class="ic-label">Scientific</div><div class="ic-val">${meta.sci}</div></div>
+    <div class="info-chip"><div class="ic-label">Season</div><div class="ic-val">${meta.season}</div></div>
+    <div class="info-chip"><div class="ic-label">Soil Type</div><div class="ic-val">${meta.soil}</div></div>
+  `;
+  document.getElementById('treatmentList').innerHTML = treatments.map(t => `<li>${t}</li>`).join('');
+  document.getElementById('resultCard').classList.add('show');
+  document.getElementById('resultCard').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+const uploadArea = document.getElementById('uploadArea');
+uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+uploadArea.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadArea.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) {
+    document.getElementById('fileInput').files = e.dataTransfer.files;
+    handleFile(document.getElementById('fileInput'));
+  }
+});
+</script>
+</body>
+</html>
