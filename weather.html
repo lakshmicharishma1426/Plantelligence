@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weather & Soil Info — Plantelligence</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    .weather-hero {
+      background: linear-gradient(135deg, #1a4a1a 0%, #2d7a2d 60%, #388e3c 100%);
+      padding: 3rem 2.5rem 2rem;
+      position: relative; overflow: hidden;
+    }
+    .weather-hero::before {
+      content:''; position:absolute; inset:0;
+      background: url('https://images.unsplash.com/photo-1504608524841-42584120d693?w=1400&q=50') center/cover;
+      opacity:.14;
+    }
+    .weather-hero-inner {
+      position:relative; max-width:1200px; margin:0 auto;
+      display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:2rem;
+    }
+    .weather-hero h1 { font-family:var(--font-head); color:#fff; font-size:2.4rem; }
+    .weather-hero p  { color:rgba(255,255,255,.78); margin-top:.4rem; }
+    .weather-widget {
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.25);
+      backdrop-filter:blur(14px);
+      border-radius:20px; padding:1.6rem 2rem;
+      color:#fff; min-width:260px; text-align:center;
+    }
+    .weather-widget .city    { font-size:1rem; opacity:.8; }
+    .weather-widget .temp    { font-size:4rem; font-family:var(--font-head); line-height:1.1; }
+    .weather-widget .desc    { font-size:1rem; margin:.3rem 0 .8rem; opacity:.85; }
+    .weather-meta { display:flex; gap:1.4rem; justify-content:center; font-size:.88rem; opacity:.9; }
+    .forecast-strip { display:flex; gap:1rem; overflow-x:auto; padding-bottom:.5rem; }
+    .forecast-strip::-webkit-scrollbar { height:5px; }
+    .forecast-strip::-webkit-scrollbar-thumb { background:var(--green-light); border-radius:4px; }
+    .fc-card {
+      flex:0 0 120px; background:#fff; border-radius:14px;
+      padding:1rem .8rem; text-align:center; box-shadow:0 4px 14px rgba(0,0,0,.1);
+      transition: transform .2s;
+    }
+    .fc-card:hover { transform:translateY(-4px); }
+    .fc-day   { font-size:.78rem; font-weight:600; color:var(--green-dark); text-transform:uppercase; letter-spacing:.04em; }
+    .fc-icon  { font-size:2rem; margin:.4rem 0; }
+    .fc-temp  { font-size:.95rem; color:#555; font-weight:500; }
+    .soil-card { background:#fff; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
+    .soil-card-header {
+      padding:1rem 1.4rem;
+      background:linear-gradient(90deg,var(--green-dark),var(--green-mid));
+      color:#fff; font-family:var(--font-head); font-size:1.1rem;
+      display:flex; align-items:center; gap:8px;
+    }
+    .soil-card-body { padding:1.4rem; }
+    .soil-row { display:flex; justify-content:space-between; align-items:center;
+                padding:.55rem 0; border-bottom:1px solid #f0f0f0; font-size:.93rem; }
+    .soil-row:last-child { border:none; }
+    .soil-label { color:#666; }
+    .soil-val   { font-weight:600; color:var(--green-dark); }
+    .meter-wrap { margin:.3rem 0 .8rem; }
+    .meter-label { font-size:.82rem; color:#888; margin-bottom:.3rem; display:flex; justify-content:space-between; }
+    .meter-bar   { height:8px; background:#e0e0e0; border-radius:4px; overflow:hidden; }
+    .meter-fill  { height:100%; border-radius:4px;
+                   background:linear-gradient(90deg,var(--green-light),var(--green-dark));
+                   transition:width .8s ease; }
+    .advisory {
+      background:linear-gradient(135deg,#e8f5e9,#f1f8e9);
+      border-left:4px solid var(--green-mid);
+      border-radius:0 var(--radius) var(--radius) 0;
+      padding:1.2rem 1.5rem; margin-top:1.5rem;
+    }
+    .advisory h4 { color:var(--green-dark); margin-bottom:.5rem; font-family:var(--font-head); }
+    .advisory ul { padding-left:1.2rem; color:#444; font-size:.92rem; line-height:1.8; }
+    .alert-card {
+      border-radius:12px; padding:1rem 1.4rem;
+      display:flex; align-items:flex-start; gap:12px;
+    }
+    .alert-warn { background:#fff8e1; border:1px solid #ffe082; }
+    .alert-info { background:#e3f2fd; border:1px solid #90caf9; }
+    .alert-icon { font-size:1.5rem; flex-shrink:0; margin-top:2px; }
+    .alert-text h5 { font-size:.95rem; margin-bottom:.2rem; }
+    .alert-text p  { font-size:.85rem; color:#555; }
+    .tag {
+      background:var(--green-pale); color:var(--green-dark);
+      padding:3px 10px; border-radius:20px; font-size:.75rem; font-weight:600;
+      display:inline-block; margin-right:4px; margin-bottom:4px;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">🌿 Plantelligence</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="detect.html">Detect</a></li>
+    <li><a href="features.html">Features</a></li>
+    <li><a href="weather.html" class="active">Weather</a></li>
+    <li><a href="blog.html">Tips</a></li>
+    <li><a href="calender.html">Calender</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="weather-hero">
+  <div class="weather-hero-inner">
+    <div class="fade-up">
+      <h1>🌤️ Weather & Soil Info</h1>
+      <p>Real-time conditions to help you make smarter farming decisions</p>
+      <div style="margin-top:1rem; display:flex; gap:10px; flex-wrap:wrap;">
+        <span class="tag">Andhra Pradesh</span>
+        <span class="tag">Live Data</span>
+        <span class="tag">Soil Analysis</span>
+      </div>
+    </div>
+    <div class="weather-widget fade-up delay-2">
+      <div class="city">📍 Guntur, Andhra Pradesh</div>
+      <div class="temp">34°C</div>
+      <div class="desc">Partly Cloudy</div>
+      <div class="weather-meta">
+        <span>💧 68%</span>
+        <span>💨 14 km/h</span>
+        <span>☀️ UV 7</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page-content">
+
+  <div class="section">
+    <h2 class="section-title">📅 7-Day Forecast</h2>
+    <div class="forecast-strip">
+      <div class="fc-card fade-up delay-1"><div class="fc-day">Mon</div><div class="fc-icon">⛅</div><div class="fc-temp">34°/26°</div></div>
+      <div class="fc-card fade-up delay-2"><div class="fc-day">Tue</div><div class="fc-icon">🌧️</div><div class="fc-temp">29°/23°</div></div>
+      <div class="fc-card fade-up delay-3"><div class="fc-day">Wed</div><div class="fc-icon">⛈️</div><div class="fc-temp">27°/22°</div></div>
+      <div class="fc-card fade-up delay-4"><div class="fc-day">Thu</div><div class="fc-icon">🌦️</div><div class="fc-temp">30°/24°</div></div>
+      <div class="fc-card fade-up delay-1"><div class="fc-day">Fri</div><div class="fc-icon">☀️</div><div class="fc-temp">35°/27°</div></div>
+      <div class="fc-card fade-up delay-2"><div class="fc-day">Sat</div><div class="fc-icon">🌤️</div><div class="fc-temp">33°/25°</div></div>
+      <div class="fc-card fade-up delay-3"><div class="fc-day">Sun</div><div class="fc-icon">☀️</div><div class="fc-temp">36°/28°</div></div>
+    </div>
+  </div>
+
+  <div class="section" style="padding-top:0;">
+    <h2 class="section-title">🌱 Soil Conditions</h2>
+    <div class="grid-3">
+      <div class="soil-card fade-up delay-1">
+        <div class="soil-card-header">💧 Soil Moisture</div>
+        <div class="soil-card-body">
+          <div class="meter-wrap">
+            <div class="meter-label"><span>Current Level</span><span>62%</span></div>
+            <div class="meter-bar"><div class="meter-fill" style="width:62%"></div></div>
+          </div>
+          <div class="meter-wrap">
+            <div class="meter-label"><span>Optimal Range</span><span>55–70%</span></div>
+            <div class="meter-bar"><div class="meter-fill" style="width:70%; background:linear-gradient(90deg,#a5d6a7,#388e3c)"></div></div>
+          </div>
+          <div class="soil-row"><span class="soil-label">Status</span><span class="badge badge-green">✅ Ideal</span></div>
+          <div class="soil-row"><span class="soil-label">Last Rain</span><span class="soil-val">2 days ago</span></div>
+        </div>
+      </div>
+      <div class="soil-card fade-up delay-2">
+        <div class="soil-card-header">🧪 Soil pH Level</div>
+        <div class="soil-card-body">
+          <div class="meter-wrap">
+            <div class="meter-label"><span>pH Reading</span><span>6.4</span></div>
+            <div class="meter-bar"><div class="meter-fill" style="width:64%"></div></div>
+          </div>
+          <div class="soil-row"><span class="soil-label">Classification</span><span class="soil-val">Slightly Acidic</span></div>
+          <div class="soil-row"><span class="soil-label">Suitable For</span><span class="soil-val">Cotton, Rice, Chilli</span></div>
+          <div class="soil-row"><span class="soil-label">Recommendation</span><span class="badge badge-yellow">Add Lime</span></div>
+        </div>
+      </div>
+      <div class="soil-card fade-up delay-3">
+        <div class="soil-card-header">🌾 Nutrient Levels (NPK)</div>
+        <div class="soil-card-body">
+          <div class="meter-wrap">
+            <div class="meter-label"><span>Nitrogen (N)</span><span>Medium</span></div>
+            <div class="meter-bar"><div class="meter-fill" style="width:50%"></div></div>
+          </div>
+          <div class="meter-wrap">
+            <div class="meter-label"><span>Phosphorus (P)</span><span>High</span></div>
+            <div class="meter-bar"><div class="meter-fill" style="width:78%"></div></div>
+          </div>
+          <div class="meter-wrap">
+            <div class="meter-label"><span>Potassium (K)</span><span>Low</span></div>
+            <div class="meter-bar"><div class="meter-fill" style="width:28%; background:linear-gradient(90deg,#ef9a9a,#e53935)"></div></div>
+          </div>
+          <div class="soil-row"><span class="soil-label">K Action</span><span class="badge badge-yellow">⚠️ Apply Fertilizer</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="advisory fade-up">
+      <h4>🧑‍🌾 Today's Farming Advisory</h4>
+      <ul>
+        <li>Rain expected Wednesday — delay pesticide application by 48 hours.</li>
+        <li>Potassium levels are low; apply MOP (Muriate of Potash) at 40 kg/acre this week.</li>
+        <li>High UV today (index 7) — schedule field work before 10 AM or after 4 PM.</li>
+        <li>Soil moisture is ideal for Cotton and Chilli transplanting through Thursday.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section" style="padding-top:0;">
+    <h2 class="section-title">⚠️ Weather Alerts</h2>
+    <div style="display:flex; flex-direction:column; gap:1rem; max-width:700px;">
+      <div class="alert-card alert-warn fade-up">
+        <div class="alert-icon">⛈️</div>
+        <div class="alert-text">
+          <h5>Thunderstorm Warning — Wednesday</h5>
+          <p>Heavy rain (40–60 mm) expected between 2 PM–8 PM. Secure irrigation equipment and delay spraying.</p>
+        </div>
+      </div>
+      <div class="alert-card alert-info fade-up delay-1">
+        <div class="alert-icon">💦</div>
+        <div class="alert-text">
+          <h5>Irrigation Advisory — Friday & Saturday</h5>
+          <p>Dry conditions forecast. Schedule drip or sprinkler irrigation for morning hours to minimise evaporation.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  © 2026 Plantelligence · Built for farmers of Andhra Pradesh · <a href="contact.html">Contact Us</a>
+</footer>
+</body>
+</html>
