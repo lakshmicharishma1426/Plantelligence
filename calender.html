@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Crop Calendar — Plantelligence</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    .cal-hero {
+      background: linear-gradient(135deg, #1a4a1a, #2e7d32);
+      padding: 3rem 2.5rem 2.5rem; position:relative; overflow:hidden;
+    }
+    .cal-hero::before {
+      content:''; position:absolute; inset:0;
+      background:url('https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=1400&q=50') center/cover;
+      opacity:.14;
+    }
+    .cal-hero-inner { position:relative; max-width:1200px; margin:0 auto; }
+    .cal-hero h1 { font-family:var(--font-head); color:#fff; font-size:2.6rem; }
+    .cal-hero p  { color:rgba(255,255,255,.78); margin-top:.5rem; }
+    .crop-tabs { display:flex; flex-wrap:wrap; gap:.7rem; margin:2rem 0 1rem; }
+    .crop-tab {
+      padding:8px 20px; border-radius:50px; border:2px solid var(--green-mid);
+      background:transparent; color:var(--green-mid); font-weight:600;
+      cursor:pointer; font-family:var(--font-body); font-size:.9rem;
+      transition:all .2s; display:flex; align-items:center; gap:6px;
+    }
+    .crop-tab:hover, .crop-tab.active { background:var(--green-mid); color:#fff; }
+    .cal-header {
+      display:grid; grid-template-columns: 180px repeat(12,1fr);
+      gap:4px; margin-bottom:4px;
+    }
+    .cal-body {
+      display:grid; grid-template-columns: 180px repeat(12,1fr);
+      gap:4px;
+    }
+    .cal-month {
+      background:var(--green-dark); color:#fff; text-align:center;
+      padding:.5rem .3rem; border-radius:8px; font-size:.78rem; font-weight:600;
+    }
+    .cal-crop-label {
+      background:#fff; border-radius:8px; padding:.7rem .8rem;
+      display:flex; align-items:center; gap:8px;
+      font-weight:600; font-size:.88rem; box-shadow:0 2px 8px rgba(0,0,0,.08);
+    }
+    .cal-cell { height:40px; border-radius:6px; }
+    .phase-sow     { background:#81c784; }
+    .phase-grow    { background:#4caf50; }
+    .phase-harvest { background:#f9a825; }
+    .phase-rest    { background:#f5f5f5; }
+    .phase-prep    { background:#a5d6a7; }
+    .legend { display:flex; gap:1.5rem; flex-wrap:wrap; margin:1.2rem 0 2rem; }
+    .legend-item { display:flex; align-items:center; gap:8px; font-size:.85rem; color:#555; }
+    .legend-dot  { width:16px; height:16px; border-radius:4px; flex-shrink:0; }
+    .activity-card {
+      background:#fff; border-radius:var(--radius); padding:1.4rem;
+      box-shadow:0 4px 16px rgba(0,0,0,.09); border-top:4px solid var(--green-light);
+    }
+    .activity-card h4 { font-family:var(--font-head); color:var(--green-dark); margin-bottom:.8rem; }
+    .activity-item {
+      display:flex; gap:12px; align-items:flex-start;
+      padding:.5rem 0; border-bottom:1px solid #f5f5f5; font-size:.9rem;
+    }
+    .activity-item:last-child { border:none; }
+    .act-icon { font-size:1.2rem; flex-shrink:0; }
+    .act-text strong { color:#1a3a1a; display:block; }
+    .act-text span   { color:#777; font-size:.82rem; }
+    .month-highlight {
+      background:linear-gradient(135deg,var(--green-pale),#f1f8e9);
+      border-radius:var(--radius); padding:1.5rem;
+      border-left:4px solid var(--green-mid);
+    }
+    .month-highlight h3 { font-family:var(--font-head); color:var(--green-dark); margin-bottom:.8rem; }
+    .cal-scroll { overflow-x:auto; padding-bottom:1rem; }
+    .cal-scroll::-webkit-scrollbar { height:5px; }
+    .cal-scroll::-webkit-scrollbar-thumb { background:var(--green-light); border-radius:4px; }
+    .cal-min-w { min-width: 900px; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">🌿 Plantelligence</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="detect.html">Detect</a></li>
+    <li><a href="features.html">Features</a></li>
+    <li><a href="weather.html">Weather</a></li>
+    <li><a href="blog.html">Tips</a></li>
+    <li><a href="calender.html" class="active">Calender</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="cal-hero">
+  <div class="cal-hero-inner">
+    <h1 class="fade-up">📅 Crop Calendar</h1>
+    <p class="fade-up delay-1">Seasonal planting, growing, and harvest schedule for Andhra Pradesh</p>
+  </div>
+</div>
+
+<div class="page-content">
+  <div class="section">
+
+    <div class="month-highlight fade-up">
+      <h3>📍 April — What to do this month</h3>
+      <div class="grid-3" style="margin-top:1rem;">
+        <div><strong style="color:var(--green-mid);">🌱 Sow / Plant</strong><br><span style="color:#555;font-size:.9rem;">Summer Vegetables, Mung Bean, Sesame</span></div>
+        <div><strong style="color:var(--accent);">🌾 Harvest</strong><br><span style="color:#555;font-size:.9rem;">Rabi Wheat, Chilli (late variety), Potato</span></div>
+        <div><strong style="color:#1565c0;">💧 Irrigate</strong><br><span style="color:#555;font-size:.9rem;">Increase frequency — dry season peak begins</span></div>
+      </div>
+    </div>
+
+    <h2 class="section-title" style="margin-top:2.5rem;">🌾 Crop-wise Annual Calendar</h2>
+    <div class="crop-tabs">
+      <button class="crop-tab active" onclick="showCrop('all',this)">🌿 All Crops</button>
+      <button class="crop-tab" onclick="showCrop('cotton',this)">🪡 Cotton</button>
+      <button class="crop-tab" onclick="showCrop('rice',this)">🍚 Rice</button>
+      <button class="crop-tab" onclick="showCrop('chilli',this)">🌶️ Chilli</button>
+      <button class="crop-tab" onclick="showCrop('mango',this)">🥭 Mango</button>
+      <button class="crop-tab" onclick="showCrop('tomato',this)">🍅 Tomato</button>
+      <button class="crop-tab" onclick="showCrop('wheat',this)">🌾 Wheat</button>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#a5d6a7"></div>Soil Preparation</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#81c784"></div>Sowing / Planting</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#4caf50"></div>Growing Season</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f9a825"></div>Harvest Period</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f5f5f5; border:1px solid #ddd"></div>Off Season</div>
+    </div>
+
+    <div class="cal-scroll fade-up">
+      <div class="cal-min-w">
+        <div class="cal-header">
+          <div></div>
+          <div class="cal-month">Jan</div><div class="cal-month">Feb</div>
+          <div class="cal-month">Mar</div><div class="cal-month">Apr</div>
+          <div class="cal-month">May</div><div class="cal-month">Jun</div>
+          <div class="cal-month">Jul</div><div class="cal-month">Aug</div>
+          <div class="cal-month">Sep</div><div class="cal-month">Oct</div>
+          <div class="cal-month">Nov</div><div class="cal-month">Dec</div>
+        </div>
+        <div class="cal-body" id="calBody">
+          <div class="cal-crop-label crop-row cotton">🪡 Cotton</div>
+          <div class="cal-cell phase-harvest"></div><div class="cal-cell phase-rest"></div>
+          <div class="cal-cell phase-prep"></div><div class="cal-cell phase-prep"></div>
+          <div class="cal-cell phase-sow"></div><div class="cal-cell phase-sow"></div>
+          <div class="cal-cell phase-grow"></div><div class="cal-cell phase-grow"></div>
+          <div class="cal-cell phase-grow"></div><div class="cal-cell phase-grow"></div>
+          <div class="cal-cell phase-harvest"></div><div class="cal-cell phase-harvest"></div>
+
+          <div class="cal-crop-label crop-row rice">🍚 Rice (Kharif)</div>
+          <div class="cal-cell phase-rest"></div><div class="cal-cell phase-rest"></div>
+          <div class="cal-cell phase-rest"></div><div class="cal-cell phase-prep"></div>
+          <div class="cal-cell phase-prep"></div><div class="cal-cell phase-sow"></div>
+          <div class="cal-cell phase-sow"></div><div class="cal-cell phase-grow"></div>
+          <div class="cal-cell phase-grow"></div><div class="cal-cell phase-grow"></div>
+          <div class="cal-cell phase-harvest"></div><div class="cal-cell phase-rest"></div>
+
+          <div class="cal-crop-label crop-row chilli">🌶️ Chilli</div>
+          <div class="cal-cell phase-harvest"></div><div class="cal-cell phase-harvest"></div>
+          <div class="cal-cell phase-rest"></div><div class="cal-cell phase-rest"></div>
+          <div class="cal-cell phase-prep"></div><div class="cal-cell phase-prep"></div>
+          <div class="cal-cell phase-sow"></div><div class="cal-cell phase-sow"></div>
+          <div class="cal-cell phase-grow"></div><div class="cal-cell phase-grow"></div>
+          <div class="cal-cell phase-grow"></div><div class="cal-cell phase-harvest"></div>
+
+          <div class="cal-crop-label crop-row mango">🥭 Mango</div>
+          <div class="cal-cell phase-grow"></div><div class="cal-cell phase-grow"></div>
+          <div class="cal-cell phase-grow"></div><div class="cal-cell phase-harvest"></div>
+          <div class="cal-cell phase-harvest"></div><div class="cal-cell phase-harvest"></div>
+          <div class="cal-cell phase-rest"></div><div class="cal-cell phase-rest"></div>
+          <div class="cal-cell phase-rest"></div><div class="cal-cell phase-prep"></div>
+          <div class="cal-cell phase-prep"></div><div class="cal-cell phase-sow"></div>
+
+          <div class="cal-crop-label crop-row tomato">🍅 Tomato</div>
+          <div class="cal-cell phase-harvest"></div><div class="cal-cell phase-rest"></div>
+          <div class="cal-cell phase-rest"></div><div class="cal-cell phase-rest"></div>
+          <div class="cal-cell phase-prep"></div><div class="cal-cell phase-sow"></div>
+          <div class="cal-cell phase-sow"></div><div class="cal-cell phase-grow"></div>
+          <div class="cal-cell phase-grow"></div><div class="cal-cell phase-harvest"></div>
+          <div class="cal-cell phase-harvest"></div><div class="cal-cell phase-harvest"></div>
+
+          <div class="cal-crop-label crop-row wheat">🌾 Wheat</div>
+          <div class="cal-cell phase-grow"></div><div class="cal-cell phase-harvest"></div>
+          <div class="cal-cell phase-harvest"></div><div class="cal-cell phase-rest"></div>
+          <div class="cal-cell phase-rest"></div><div class="cal-cell phase-rest"></div>
+          <div class="cal-cell phase-rest"></div><div class="cal-cell phase-rest"></div>
+          <div class="cal-cell phase-rest"></div><div class="cal-cell phase-prep"></div>
+          <div class="cal-cell phase-sow"></div><div class="cal-cell phase-sow"></div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title" style="margin-top:3rem;">📋 Key Monthly Activities</h2>
+    <div class="grid-3">
+      <div class="activity-card fade-up delay-1">
+        <h4>April – June</h4>
+        <div class="activity-item"><div class="act-icon">🌱</div><div class="act-text"><strong>Prepare for Kharif</strong><span>Deep ploughing, FYM application, soil testing</span></div></div>
+        <div class="activity-item"><div class="act-icon">💧</div><div class="act-text"><strong>Irrigation critical</strong><span>Pre-monsoon dry period; schedule drip irrigation</span></div></div>
+        <div class="activity-item"><div class="act-icon">🥭</div><div class="act-text"><strong>Mango harvest</strong><span>Alphonso and Banganapalli varieties ready</span></div></div>
+      </div>
+      <div class="activity-card fade-up delay-2">
+        <h4>July – September</h4>
+        <div class="activity-item"><div class="act-icon">🌧️</div><div class="act-text"><strong>Monsoon sowing</strong><span>Sow Cotton, Rice, Chilli; ensure drainage</span></div></div>
+        <div class="activity-item"><div class="act-icon">🐛</div><div class="act-text"><strong>Pest watch</strong><span>High humidity increases fungal & pest risk</span></div></div>
+        <div class="activity-item"><div class="act-icon">🧪</div><div class="act-text"><strong>Fertilizer top-dress</strong><span>Apply N at tillering/branching stage</span></div></div>
+      </div>
+      <div class="activity-card fade-up delay-3">
+        <h4>October – December</h4>
+        <div class="activity-item"><div class="act-icon">🌾</div><div class="act-text"><strong>Kharif harvest</strong><span>Cotton picking, Rice cutting, Chilli drying</span></div></div>
+        <div class="activity-item"><div class="act-icon">🌱</div><div class="act-text"><strong>Rabi sowing begins</strong><span>Sow Wheat, Potato; soil preparation</span></div></div>
+        <div class="activity-item"><div class="act-icon">📦</div><div class="act-text"><strong>Storage & grading</strong><span>Proper drying and storage prevents post-harvest loss</span></div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  © 2026 Plantelligence · Built for farmers of Andhra Pradesh · <a href="contact.html">Contact Us</a>
+</footer>
+
+<script>
+function showCrop(crop, btn) {
+  document.querySelectorAll('.crop-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.crop-row').forEach(row => {
+    const isCrop = row.classList.contains(crop);
+    const siblings = getSiblings(row, 12);
+    const show = crop === 'all' || isCrop;
+    row.style.display = show ? '' : 'none';
+    siblings.forEach(s => s.style.display = show ? '' : 'none');
+  });
+}
+function getSiblings(el, count) {
+  const result = [];
+  let next = el.nextElementSibling;
+  for (let i = 0; i < count && next; i++) {
+    result.push(next);
+    next = next.nextElementSibling;
+  }
+  return result;
+}
+</script>
+</body>
+</html>
